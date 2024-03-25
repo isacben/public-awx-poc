@@ -1,0 +1,409 @@
+{
+	"info": {
+		"_postman_id": "933ba1d8-7cc1-4c85-a3d6-d9c00b626611",
+		"name": "Test Public Workspace",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "12794106-933ba1d8-7cc1-4c85-a3d6-d9c00b626611"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "API Access",
+					"item": [
+						{
+							"name": "Obtain access token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"bearer_token_expires_at\", JSON.parse(responseBody).expires_at);",
+											"pm.environment.set(\"bearer_token\", JSON.parse(responseBody).token);"
+										],
+										"type": "text/javascript",
+										"id": "18353d02-2ee7-4907-a02b-4f391363dab5"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const clientId = pm.variables.get(\"clientId\");",
+											"const apiKey = pm.variables.get(\"apiKey\");",
+											"",
+											"if (clientId === \"\" || apiKey === \"\") {",
+											"    throw new Error(\"Please set the values for the variables 'clientId' or 'apiKey'.\");",
+											"}"
+										],
+										"type": "text/javascript",
+										"id": "17922146-02a5-4b04-828f-19d03de027ff"
+									}
+								}
+							],
+							"id": "bb33dce6-c8d9-442c-a9ff-1516ca97e90a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-client-id",
+										"value": "{{clientId}}"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/api/v1/authentication/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"authentication",
+										"login"
+									]
+								},
+								"description": "**POST /api/v1/authentication/login **"
+							},
+							"response": []
+						}
+					],
+					"id": "e994a56d-a0ec-4c1a-8319-58ac6930db51"
+				}
+			],
+			"id": "a456f90f-94d7-4366-96a6-ebf0430b9401",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "e8709397-d105-4501-8df2-fe770621f2f0"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						],
+						"id": "81d5defc-f055-48dd-9a6c-c2e5d3b56f30"
+					}
+				}
+			]
+		},
+		{
+			"name": "Payouts",
+			"item": [
+				{
+					"name": "Beneficiaries",
+					"item": [
+						{
+							"name": "Get list of beneficiaries",
+							"id": "f46c8b11-bc76-4fd0-ba3b-cd7387846e4e",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-on-behalf-of",
+										"value": "{{connected_account_id}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}/api/v1/beneficiaries",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"beneficiaries"
+									],
+									"query": [
+										{
+											"key": "bank_account_number",
+											"value": "",
+											"description": "Filter on bank account number of beneficiary",
+											"disabled": true
+										},
+										{
+											"key": "company_name",
+											"value": "",
+											"description": "Filter on company name of beneficiary",
+											"disabled": true
+										},
+										{
+											"key": "entity_type",
+											"value": "",
+											"description": "Filter on entity type of COMPANY or PERSONAL",
+											"disabled": true
+										},
+										{
+											"key": "from_date",
+											"value": "",
+											"description": "The start date of created_at in ISO8601 format (inclusive)",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"description": "Filter on name of beneficiary",
+											"disabled": true
+										},
+										{
+											"key": "nick_name",
+											"value": "",
+											"description": "Filter on nickname of beneficiary",
+											"disabled": true
+										},
+										{
+											"key": "page_num",
+											"value": "",
+											"description": "Page number, starts from 0",
+											"disabled": true
+										},
+										{
+											"key": "page_size",
+											"value": "",
+											"description": "Number of results per page. Default value is 100.",
+											"disabled": true
+										},
+										{
+											"key": "to_date",
+											"value": "",
+											"description": "The end date of created_at in ISO8601 format (inclusive)",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "575c0138-285b-488a-aef0-c852fd3779ee",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"let request_url_path = \"/\" + pm.request.url.path.join(\"/\");",
+									"if (!request_url_path.includes(\":beneficiary_id\"))",
+									"    return;",
+									"",
+									"let beneficiary_id = pm.environment.get(\"beneficiary_id\");",
+									"",
+									"// If the variable does not exist or is empty, default it.",
+									"if (typeof beneficiary_id === \"undefined\" || beneficiary_id === \"\") {",
+									"    request_url = BASE_URL + \"/api/v1/beneficiaries\";",
+									"    console.warn(`Environment variable 'beneficiary_id' is not set, calling ${request_url} to default it.`);",
+									"",
+									"    pm.sendRequest({",
+									"        url: request_url,",
+									"        method: \"GET\",",
+									"        header: UTILITY.getRequestHeader()",
+									"    }, function (err, res) {",
+									"        if (res.json().items.length > 0) {",
+									"            console.info(`Defaulting 'beneficiary_id' to the first beneficiary ${res.json().items[0].beneficiary_id}`);",
+									"            pm.variables.set(\"beneficiary_id\", res.json().items[0].beneficiary_id);",
+									"        }",
+									"        else {",
+									"            throw new Error(\"Environment variable 'beneficiary_id' is not set, and cannot set a default, as there is no beneficiary returned.\");",
+									"        }",
+									"    });",
+									"}"
+								],
+								"id": "d75c06a5-7b5b-4d4c-9003-c14f0f9d436d"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								],
+								"id": "68c9deba-6f14-4762-9530-1b990ff28402"
+							}
+						}
+					]
+				}
+			],
+			"id": "79dc1eb6-6403-49f0-a4e2-d9ca1c861f56"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "61a198a0-196e-439b-af0a-eb7e447dc162",
+				"type": "text/javascript",
+				"exec": [
+					"/************************************************",
+					" * This collection pre-request script runs before the request one.",
+					" ***********************************************/",
+					"",
+					"// Global variables and functions",
+					"BASE_URL = pm.variables.get(\"url\");",
+					"",
+					"UTILITY = {",
+					"    getRequestHeader: function () {",
+					"        if (pm.request.headers.find((x) => x.key === \"x-on-behalf-of\") === undefined) {",
+					"            throw Error(\"Missing 'x-on-behalf-of' in the HTTP Header.\")",
+					"        }",
+					"        else if (pm.request.headers.find((x) => x.key === \"x-on-behalf-of\" && x.disabled === true)) {",
+					"            return { \"Authorization\": \"Bearer \" + pm.environment.get(\"bearer_token\") };",
+					"        }",
+					"        else {",
+					"            let connectedAccountId = pm.request.headers.find((x) => x.key === \"x-on-behalf-of\").value;",
+					"            connectedAccountId = connectedAccountId === \"{{connected_account_id}}\" ? pm.environment.get(\"connected_account_id\") : connectedAccountId;",
+					"",
+					"            return {",
+					"                \"Authorization\": \"Bearer \" + pm.environment.get(\"bearer_token\"),",
+					"                \"x-on-behalf-of\": connectedAccountId",
+					"            };",
+					"        }",
+					"    }",
+					"};",
+					"",
+					"// Initialize environment variables. ",
+					"if (typeof pm.environment.get(\"connected_account_id\") === 'undefined')",
+					"    pm.environment.set(\"connected_account_id\", \"\");",
+					"",
+					"// Test the bearer_token expiry.",
+					"if (\"/\" + pm.request.url.path.join(\"/\") === \"/api/v1/authentication/login\")",
+					"    return;",
+					"",
+					"let loginUrl = BASE_URL + \"/api/v1/authentication/login\";",
+					"console.info(`bearer_token invalid, calling ${loginUrl} to refresh...`);",
+					"",
+					"// Obtain access token, before each request.",
+					"let clientId = pm.variables.get(\"clientId\");",
+					"let apiKey = pm.variables.get(\"apiKey\");",
+					"",
+					"if (clientId === \"\" || apiKey === \"\") {",
+					"    throw new Error(\"Please set the values for the variables 'clientId' or 'apiKey'.\");",
+					"}",
+					"",
+					"pm.sendRequest({",
+					"    url: loginUrl,",
+					"    method: \"POST\",",
+					"    header: {",
+					"        \"x-client-id\": clientId,",
+					"        \"x-api-key\": apiKey",
+					"    }",
+					"}, function (err, res) {",
+					"    pm.environment.set(\"bearer_token_expires_at\", res.json().expires_at);",
+					"    pm.environment.set(\"bearer_token\", res.json().token);",
+					"",
+					"    // pm.sendRequest() is asynchronous, so only execute the function after the bearer_token is set.",
+					"    executeWithValidBearerToken(BASE_URL);",
+					"});",
+					"",
+					"// Encode query parameters, e.g. 2021-12-21T18:50:00+08:00 -> 2021-12-21T18%3A50%3A00%2B08%3A00.",
+					"pm.request.url.query.filter((x) => x.disabled === undefined).forEach((x) => x.value = encodeURIComponent(x.value));",
+					"",
+					"function executeWithValidBearerToken(baseUrl) {",
+					"    if (pm.environment.get(\"connected_account_id\") === \"\") {",
+					"        if (pm.request.headers.find((x) => x.key === \"x-on-behalf-of\" && (x.disabled === undefined || x.disabled === false))) {",
+					"            request_url = baseUrl + \"/api/v1/accounts\";",
+					"            console.warn(`HTTP Header 'x-on-behalf-of' is on, but the environment variable 'connected_account_id' is not set, calling ${request_url} to default it.`);",
+					"",
+					"            pm.sendRequest({",
+					"                url: request_url,",
+					"                method: \"GET\",",
+					"                header: { \"Authorization\": \"Bearer \" + pm.environment.get(\"bearer_token\") }",
+					"            }, function (err, res) {",
+					"                active_account = res.json().items.find((x) => x.status === \"ACTIVE\");",
+					"                if (active_account != undefined) {",
+					"                    console.info(`Defaulting 'connected_account_id' to the first ACTIVE account ${active_account.id}`);",
+					"                    pm.environment.set(\"connected_account_id\", active_account.id);",
+					"                }",
+					"                else {",
+					"                    throw new Error(\"Environment variable 'connected_account_id' is not set, and cannot set a default, as there is no ACTIVE account returned.\");",
+					"                }",
+					"            });",
+					"        }",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cc2734b8-b912-4257-a1e4-0894aeed6db6",
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.request.method === \"POST\") {",
+					"    pm.test(\"Successful POST request\", () => {",
+					"        pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+					"    });",
+					"}",
+					"else {",
+					"    pm.test(\"Status code is 200\", () => {",
+					"        pm.response.to.have.status(200);",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "37bab8cb-07fc-4c74-9335-f6fea229810b",
+			"key": "clientId",
+			"value": ""
+		},
+		{
+			"id": "b3613f2c-2af9-4af6-80a1-d1af9def9db7",
+			"key": "apiKey",
+			"value": ""
+		},
+		{
+			"id": "014ddf51-a6da-468a-ac25-0a1da64c0933",
+			"key": "url",
+			"value": ""
+		},
+		{
+			"id": "71f1b205-8c5f-4160-b3d6-21f07ee88399",
+			"key": "file_url",
+			"value": ""
+		}
+	]
+}
